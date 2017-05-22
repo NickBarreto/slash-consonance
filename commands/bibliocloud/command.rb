@@ -53,7 +53,7 @@ module Bibliocloud
         if data["products"].first["rights_not_available_countries"].empty? == true
           territories_excluded = "None"
         else
-          # The .join method returns a string rather than an array
+          # The .join() method returns a string rather than an array
           territories_excluded = data["products"].first["rights_not_available_countries"].join(", ")
         end
         # Selecting the cover is a bit of a complex path
@@ -72,7 +72,7 @@ module Bibliocloud
         if data["products"].first["marketingtexts"].empty? == true
           description = "(There is no description in Bibliocloud)"
         else
-          if data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"].empty == true
+          if data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"].empty? == true
             description = "(There is no main description for this title in Bibliocloud)"
           else
             description = data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"]
