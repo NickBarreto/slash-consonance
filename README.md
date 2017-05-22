@@ -47,7 +47,9 @@ Set the token from the slash command as a config var in your heroku app. You als
 	heroku config:set SLACK_TOKEN=<your_slack_token>
 	heroku config:set BIBLIOCLOUD_TOKEN=<your_bibliocloud_token>
 
-That's it, you're all set up!
+You can also set these on the web without using the Heroku CLI in your terminal. Go to [https://dashboard.heroku.com/apps/](https://dashboard.heroku.com/apps/), click your app, then go to `Settings` and click "Reveal Config Vars". You'll see both those variables in there and be able to edit them.
+
+Once those are set, you're all done!
 
 ## Usage
 
