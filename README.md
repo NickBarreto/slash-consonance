@@ -8,11 +8,11 @@ Slash-bibliocloud runs on a heroku dyno that receives the slash commands from yo
 
 ## Requirements
 
-You'll need a Heroku login, git and the Heroku CLI installed. 
+You'll need a Heroku account, an authorisation token for querying the Bibliocloud API, and admin access to your team's Slack.
 
-You'll also need an authorisation token for querying the Bibliocloud API, and admin access to your team's Slack.
+For the manual installation you'll need git and the Heroku CLI installed. 
 
-## Instalation 
+## Manual Installation
 
 Clone this repo and push it to a new Heroku application for yourself.
 
@@ -24,7 +24,17 @@ Clone this repo and push it to a new Heroku application for yourself.
 
 You can call your app anything you want, but I think your Slack team name plus "-slash-bibliocloud" is a good option.
 
-You now need to do some configuration from within Slack.
+### Automatic Heroku Deploy
+
+If you don't want to install git and muck around on the command line, you can click this handy button to deploy automatically to Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+As above, you'll need to choose a name and a region for your servers.
+
+## Configuration
+
+You need to do some configuration from within Slack:
 
 Add a new custom intergration to your team's Slack. Specifically, a slash command.
 
@@ -32,7 +42,7 @@ Fill in the required fields. Use something sensible for the command, such as '/b
 
 Press `Add Slash Command Intergration`.
 
-Set the token from the slash command as a config var in your heroku app. You also need to set your Bibliocloud API token. Back in your terminal: 
+Set the token from the slash command as a config var in your heroku app. You also need to set your Bibliocloud API token. Back in your terminal:
 
 	heroku config:set SLACK_TOKEN=<your_slack_token>
 	heroku config:set BIBLIOCLOUD_TOKEN=<your_bibliocloud_token>
