@@ -2,13 +2,15 @@
 
 _Search Bibliocloud from within Slack_
 
-Slash-bibliocloud lets you query your Bibliocloud data from within slack using a custom slash command intergration. 
+Slash-bibliocloud lets you query your [Bibliocloud](http://bibliocloud.com/) data from within slack using a custom slash command intergration. 
 
-Slash-bibliocloud runs on a heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellend cksh_commander gem.
+Slash-bibliocloud runs on a heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
 
 ## Requirements
 
-You'll need a Heroku login, git and the Heroku CLI installed.
+You'll need a Heroku login, git and the Heroku CLI installed. 
+
+You'll also need an authorisation token for querying the Bibliocloud API, and admin access to your team's Slack.
 
 ## Instalation 
 
@@ -42,3 +44,7 @@ That's it, you're all set up!
 You can now query your Bibliocloud data from within slack. Type in `/bibliocloud [text to search]` and you'll get back a list of books that contain the words you searched in their title, along with their ISBNs. You can then use `/bibliocloud isbn [an_isbn]` to get more information about one book. You can also search by publication date with `/bibiliocloud date yyyy-mm-dd`. Hooray!
 
 Note: Heroku free dynos go to sleep after a certain amount of inactivity. If you make a query and you get an error, try it again in a moment after the dyno has woken up. If you want it to run 24/7, you can upgrade it to a Hobby Dyno for $7 a month.
+
+## Contributing
+
+All the commands are defined in the `/commands/bibliocloud/command.rb` file. If you want to add any new subcommands, you can send them as pull requests for changes to that file.
