@@ -2,6 +2,7 @@ require "cksh_commander"
 require "json"
 require "httparty"
 require 'date'
+require 'uri'
 
 module Bibliocloud
   class Command < CKSHCommander::Command
@@ -14,6 +15,7 @@ module Bibliocloud
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
       bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
+      text = URI.escape(text) # Sanitise user input for URLs
       # Query the Bibliocloud API
       # [work_title_cont] means the API will return results that contain in their the
       # words title the 'text' variable passed in from the slash command.
@@ -130,6 +132,10 @@ module Bibliocloud
       # Query the Bibliocloud API
       # [pub_date_eq] means the API will return results based on the 'text'
       # variable passed in from the slash command that matches the pub date of a book.
+      if text = 'today'
+        date = DateTime.now # Returns the date and time today
+        text = date.strftime('%Y-%m-%d') # Converts today's date and time object to string 'yyyy-mm-dd'
+      end
       data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[pub_date_eq]=#{text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
       if data["products"].empty? == true # Needed if there are no results
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
