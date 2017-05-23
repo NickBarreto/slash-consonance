@@ -15,11 +15,11 @@ module Bibliocloud
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
       bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
-      text = URI.escape(text) # Sanitise user input for URLs
+      escaped_text = URI.escape(text) # Sanitise user input for URLs
       # Query the Bibliocloud API
       # [work_title_cont] means the API will return results that contain in their the
       # words title the 'text' variable passed in from the slash command.
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[work_title_cont]=#{text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[work_title_cont]=#{escaped_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
       if data["products"].empty? == true #needed for the header authorisation
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
       else # Pull out info from the Ruby hash returned by Httparty
