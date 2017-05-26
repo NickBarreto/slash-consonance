@@ -11,17 +11,19 @@ module Bibliocloud
     def bibliocloud_api_call(text,search_type)
       bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
       if search_type == 'title'
-        # [work_title_cont] means the API will return results that contain in their the
-        # words title the 'text' variable passed in from the slash command.
+        # [work_title_cont] means the API will return results that contain in their title
+        # the words passed in from the slash command.
         query_string = 'work_title_cont'
         search_text = URI.escape(text) # Sanitise user input for URLs
       end
       if search_type == 'isbn'
         query_string = 'isbn_eq'
+        # [isbn_eq] means the API will return results match isbn of a book.
         search_text = text.gsub('-', '') # Remove hyphens from ISBN sent from Slack if there are any
       end
       if search_type == 'date'
         query_string = 'pub_date_eq'
+        # [pub_date_eq] means the API will return results based on the pub date of a book.
         if text == 'today'
           date = DateTime.now # Returns the date and time today
           search_text = date.strftime('%Y-%m-%d') # Converts today's date and time object to string 'yyyy-mm-dd'
@@ -38,9 +40,7 @@ module Bibliocloud
     # SLACK: /bibliocloud text
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
-      
-      # Query the Bibliocloud API
-      
+      # Query the Bibliocloud API with bibliocloud_api_call method defined above
       data = bibliocloud_api_call("#{text}","title")
       if data["products"].empty? == true #needed for the header authorisation
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
@@ -58,12 +58,8 @@ module Bibliocloud
     # SLACK: /bibliocloud isbn xxxxxxxxxxxxx
     desc "isbn [ISBN to search for]", "Shows you Bibliocloud data for the title with a matching ISBN."
     def isbn(text)
-      bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
-      # Query the Bibliocloud API
-      # [isbn_eq] means the API will return results based on the 'text'
-      # variable passed in from the slash command that match isbn of a book.
-      text = text.gsub('-', '') # Remove hyphens from ISBN sent from Slack if there are any
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[isbn_eq]=#{text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      # Query the Bibliocloud API with bibliocloud_api_call method defined above
+      data = bibliocloud_api_call("#{text}","isbn")
       if data["products"].empty? == true # Needed if there are no results
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
       else # Pull out info from the Ruby hash returned by Httparty
@@ -150,15 +146,8 @@ module Bibliocloud
     # SLACK: /bibliocloud date yyyy-mm-dd
     desc "date [YYYY-MM-DD]", "Shows you which books in Bibliocloud publish on a date in yyyy-mm-dd."
     def date(text)
-      bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
       # Query the Bibliocloud API
-      # [pub_date_eq] means the API will return results based on the 'text'
-      # variable passed in from the slash command that matches the pub date of a book.
-      if text == 'today'
-        date = DateTime.now # Returns the date and time today
-        text = date.strftime('%Y-%m-%d') # Converts today's date and time object to string 'yyyy-mm-dd'
-      end
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[pub_date_eq]=#{text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      data = bibliocloud_api_call("#{text}","date")
       if data["products"].empty? == true # Needed if there are no results
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
       else
