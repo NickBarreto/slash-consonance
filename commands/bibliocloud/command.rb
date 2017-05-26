@@ -8,18 +8,40 @@ module Bibliocloud
   class Command < CKSHCommander::Command
     set token: ENV['SLACK_TOKEN'] # This is needed for authentication into slack, and should be added as a config var
 
+    def bibliocloud_api_call(text,search_type)
+      bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
+      if search_type == 'title'
+        # [work_title_cont] means the API will return results that contain in their the
+        # words title the 'text' variable passed in from the slash command.
+        query_string = 'work_title_cont'
+        search_text = URI.escape(text) # Sanitise user input for URLs
+      end
+      if search_type == 'isbn'
+        query_string = 'isbn_eq'
+        search_text = text.gsub('-', '') # Remove hyphens from ISBN sent from Slack if there are any
+      end
+      if search_type == 'date'
+        query_string = 'pub_date_eq'
+        if text == 'today'
+          date = DateTime.now # Returns the date and time today
+          search_text = date.strftime('%Y-%m-%d') # Converts today's date and time object to string 'yyyy-mm-dd'
+        else
+          search_text = text
+        end
+      end
+      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[#{query_string}]=#{search_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      return data
+    end
     # Search by title, the basic command
     # Searches for titles containing the text passed in. Can return
     # multiple matches as this is a general search.
     # SLACK: /bibliocloud text
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
-      bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
-      escaped_text = URI.escape(text) # Sanitise user input for URLs
+      
       # Query the Bibliocloud API
-      # [work_title_cont] means the API will return results that contain in their the
-      # words title the 'text' variable passed in from the slash command.
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[work_title_cont]=#{escaped_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      
+      data = bibliocloud_api_call("#{text}","title")
       if data["products"].empty? == true #needed for the header authorisation
         set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
       else # Pull out info from the Ruby hash returned by Httparty
@@ -132,7 +154,7 @@ module Bibliocloud
       # Query the Bibliocloud API
       # [pub_date_eq] means the API will return results based on the 'text'
       # variable passed in from the slash command that matches the pub date of a book.
-      if text = 'today'
+      if text == 'today'
         date = DateTime.now # Returns the date and time today
         text = date.strftime('%Y-%m-%d') # Converts today's date and time object to string 'yyyy-mm-dd'
       end
