@@ -38,6 +38,8 @@ You need to do some configuration from within Slack:
 
 Add a new custom intergration to your team's Slack. Specifically, a slash command.
 
+UPDATE: It looks like Slack have just changed how these are setup, and generally they want new slash commands to be added as Slack Apps. This isn't how this code is setup at the moment, so for now you should create you new slash command [here](https://my.slack.com/apps/A0F82E8CA-slash-commands). This app may be changed to conform to the new Slack App setup soon.
+
 Fill in the required fields. Use something sensible for the command, such as '/bibliocloud'. The URL should point to the heroku app you just created: `https://<yourappname>.herokuapp.com`. Method: `POST`. I gave the intergration the same name and icon that we use for the Bibliocloud changes bot.
 
 Press `Add Slash Command Intergration`.
