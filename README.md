@@ -2,15 +2,17 @@
 
 _Search Bibliocloud from within Slack_
 
-Slash-bibliocloud lets you query your [Bibliocloud](http://bibliocloud.com/) data from within slack using a custom slash command intergration. 
+Slash-bibliocloud lets you query your [Bibliocloud](http://bibliocloud.com/) data from within slack using a custom slash command integration.
 
-Slash-bibliocloud runs on a heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
+Slash-bibliocloud runs on a Heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
 
 ## Requirements
 
-You'll need a Heroku account, an authorisation token for querying the Bibliocloud API, and admin access to your team's Slack.
+You'll need a Heroku account, an API key for querying the Bibliocloud API, and admin access to your team's Slack.
 
-For the manual installation you'll need git and the Heroku CLI installed. 
+You'll have to raise a support ticket with the Bibliocloud team to request an API key.
+
+For the manual installation you'll need git and the Heroku CLI installed.
 
 ## Manual Installation
 
@@ -36,15 +38,15 @@ As above, you'll need to choose a name and a region for your servers.
 
 You need to do some configuration from within Slack:
 
-Add a new custom intergration to your team's Slack. Specifically, a slash command.
+Add a new custom integration to your team's Slack. Specifically, a slash command.
 
-UPDATE: It looks like Slack have just changed how these are setup, and generally they want new slash commands to be added as Slack Apps. This isn't how this code is setup at the moment, so for now you should create you new slash command [here](https://my.slack.com/apps/A0F82E8CA-slash-commands). This app may be changed to conform to the new Slack App setup soon.
+UPDATE: It looks like Slack have just changed how these are setup, and generally they want new slash commands to be added as Slack Apps. This isn't how this code is set up at the moment, so for now you should create you new slash command [here](https://my.slack.com/apps/A0F82E8CA-slash-commands). This app may be changed to conform to the new Slack App set up soon.
 
-Fill in the required fields. Use something sensible for the command, such as '/bibliocloud'. The URL should point to the heroku app you just created: `https://<yourappname>.herokuapp.com`. Method: `POST`. I gave the intergration the same name and icon that we use for the Bibliocloud changes bot.
+Fill in the required fields. Use something sensible for the command, such as '/bibliocloud'. The URL should point to the Heroku app you just created: `https://<yourappname>.herokuapp.com`. Method: `POST`. I gave the integration the same name and icon that we use for the Bibliocloud changes bot.
 
-Press `Add Slash Command Intergration`.
+Press `Add Slash Command Integration`.
 
-Set the token from the slash command as a config var in your heroku app. You also need to set your Bibliocloud API token. Back in your terminal:
+Set the token from the slash command as a config var in your Heroku app. You also need to set your Bibliocloud API token. Back in your terminal:
 
 	heroku config:set SLACK_TOKEN=<your_slack_token>
 	heroku config:set BIBLIOCLOUD_TOKEN=<your_bibliocloud_token>
@@ -55,7 +57,7 @@ Once those are set, you're all done!
 
 ## Usage
 
-You can now query your Bibliocloud data from within slack. Type in `/bibliocloud [text to search]` and you'll get back a list of books that contain the words you searched in their title, along with their ISBNs. You can then use `/bibliocloud isbn [an_isbn]` to get more information about one book. You can also search by publication date with `/bibiliocloud date yyyy-mm-dd`. Hooray!
+You can now query your Bibliocloud data from within slack. Type in `/bibliocloud [text to search]` and you'll get back a list of products that contain the words you searched in their title, along with their ISBNs. You can then use `/bibliocloud isbn [an_isbn]` to get more information about one product. You can also search by publication date with `/bibiliocloud date yyyy-mm-dd`. Hooray!
 
 Note: Heroku free dynos go to sleep after a certain amount of inactivity. If you make a query and you get an error, try it again in a moment after the dyno has woken up. If you want it to run 24/7, you can upgrade it to a Hobby Dyno for $7 a month.
 
