@@ -45,6 +45,7 @@ module Bibliocloud
         work_id = data["products"].first["work_id"]
         title = data["products"].first["full_title"]
         author = data["products"].first["authorship"]
+        isbn = data["products"].first["isbn"].gsub('-', '')
         # Ingesting and parsing the date as a date object
         pubdate = data["products"].first["pub_date"]
         pubdate = Date.parse(pubdate)
@@ -87,7 +88,7 @@ module Bibliocloud
           "fields" => [
             {
               "title" => "ISBN",
-              "value" => "#{text}",
+              "value" => "#{isbn}",
               "short" => true
             },
             {
@@ -143,9 +144,7 @@ module Bibliocloud
         set_response_text("Bibliocloud has these books with ‘#{text}’ in the title:\n#{response}")
       end
       if data["products"].length == 1
-        # Not working!
-        # add_response_attachment(response.to_json)
-        set_response_text(response.to_json)
+        add_response_attachment(response.to_json)
       end
     end
 
