@@ -80,7 +80,7 @@ module Bibliocloud
         end
         # Craft the response JSON as a ruby hash
         response = {
-          "pretext" => "This ISBN is for _#{title}_ according to Bibliocloud.",
+          "pretext" => "This search found only _#{title}_ in Bibliocloud.",
           "title" => "#{title}",
           "title_link" => "https://app.bibliocloud.com/works/#{work_id}",
           "author_name" => "#{author}",
@@ -156,84 +156,12 @@ module Bibliocloud
     def isbn(text)
       # Query the Bibliocloud API with bibliocloud_api_call method defined above
       data = bibliocloud_api_call("#{text}","isbn")
-      if data["products"].empty? == true # Needed if there are no results
-        set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
-      else # Pull out info from the Ruby hash returned by Httparty
-        work_id = data["products"].first["work_id"]
-        title = data["products"].first["full_title"]
-        author = data["products"].first["authorship"]
-        # Ingesting and parsing the date as a date object
-        pubdate = data["products"].first["pub_date"]
-        pubdate = Date.parse(pubdate)
-        pubdate_as_text = pubdate.strftime('%d %b %Y')
-        if data["products"].first["rights_not_available_countries"].empty? == true
-          territories_excluded = "None"
-        else
-          # The .join() method returns a string rather than an array
-          territories_excluded = data["products"].first["rights_not_available_countries"].join(", ")
-        end
-        # Selecting the cover is a bit of a complex path
-        if data["products"].first["supportingresources"].empty? == true
-          cover = "none"
-        else
-          cover = data["products"].first["supportingresources"].first["style_urls"].find{ |x| x["style"] == "jpg_rgb_0050w" }["url"]
-        end
-        # Selecting the price
-        if data["products"].first["prices"].empty? == true
-          price = "(None found)"
-        else
-          price = data["products"].first["prices"].find{ |x| x["currency_code"] == "GBP" && x["price_qualifier"] == "05"}["price_amount"]
-        end
-        # Select the description
-        if data["products"].first["marketingtexts"].empty? == true
-          description = "(There is no description in Bibliocloud)"
-        else
-          if data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"].empty? == true
-            description = "(There is no main description for this title in Bibliocloud)"
-          else
-            description = data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"]
-          end
-        end
-# Escape the HTML entities as per Slack's requirements
-description = description.gsub('<', '&lt;').gsub('>', '&gt;')
-        # Send the response to Slack using the attachment format: https://api.slack.com/docs/message-attachments.
-        add_response_attachment({
-          "pretext": "This ISBN is for _#{title}_ according to Bibliocloud.",
-          "title": "#{title}",
-          "title_link": "https://app.bibliocloud.com/works/#{work_id}",
-          "author_name": "#{author}",
-          "thumb_url": "#{cover}",
-          "fields": [
-            {
-              "title": "ISBN",
-              "value": "#{text}",
-              "short": true
-            },
-            {
-              "title": "Publication Date",
-              "value": "#{pubdate_as_text}",
-              "short": true
-            },
-            {
-              "title": "GBP Price",
-              "value": "£#{price}",
-              "short": true
-            },
-            {
-              "title": "Territories Excluded",
-              "value": "#{territories_excluded}",
-              "short": true
-            },
-            {
-              "title": "Description",
-              "value": "#{description}",
-              "short": false
-            }
-          ],
-          "footer": "Bibliocloud API",
-          "footer_icon": "https://app.bibliocloud.com/favicon-32x32.png",
-          "mrkdwn_in": ["pretext"]
-        })
+      response = create_response(data)
+      # Send message to Slack depending on whether there is more than one result or not 
+      if data["products"].length == 1
+        add_response_attachment(response)
+      else
+        set_response_text(response)
       end
     end
 
@@ -244,13 +172,16 @@ description = description.gsub('<', '&lt;').gsub('>', '&gt;')
     def date(text)
       # Query the Bibliocloud API
       data = bibliocloud_api_call("#{text}","date")
-      if data["products"].empty? == true # Needed if there are no results
-        set_response_text("I didn't find anything, sorry. Could you change your search and try again?")
-      else
-        results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", "") } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
-        response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}" } #Create the response text
-        response = response.join("\n") # Join each response with a newline as the separator
+      response = create_response(data)
+      # Send message to Slack depending on whether there is more than one result or not 
+      if data["products"].length == 0
+        set_response_text(response)
+      end
+      if data["products"].length > 1
         set_response_text("Bibliocloud has these books publishing on #{text}:\n#{response}")
+      end
+      if data["products"].length == 1
+        add_response_attachment(response)
       end
     end
   end
