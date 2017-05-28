@@ -143,7 +143,9 @@ module Bibliocloud
         set_response_text("Bibliocloud has these books with ‘#{text}’ in the title:\n#{response}")
       end
       if data["products"].length == 1
-        add_response_attachment(response.to_json)
+        # Not working!
+        # add_response_attachment(response.to_json)
+        set_response_text(response.to_json)
       end
     end
 
