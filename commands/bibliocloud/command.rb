@@ -120,7 +120,7 @@ module Bibliocloud
       end
       if  data["products"].length > 1 # More than one match, return only general info
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", ""), work_id: p["work_id"] } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
-        response = results.collect { |p| "<a href='https://app.bibliocloud.com/works/#{p[:work_id]}'>#{p[:title]}</a>, which has the ISBN #{p[:isbn]}" } #Create the response text
+        response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}: https://app.bibliocloud.com/works/#{p[:work_id]}" } #Create the response text
         response = response.join("\n")
         return response
       end
