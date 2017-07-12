@@ -80,7 +80,7 @@ module Bibliocloud
         end
         # Craft the response JSON as a ruby hash
         response = {
-          "pretext" => "This search found only _#{title}_ in Bibliocloud.",
+          "pretext" => "This search matched _#{title}_ in Bibliocloud.",
           "title" => "#{title}",
           "title_link" => "https://app.bibliocloud.com/works/#{work_id}",
           "author_name" => "#{author}",
@@ -119,8 +119,8 @@ module Bibliocloud
         return response
       end
       if  data["products"].length > 1 # More than one match, return only general info
-        results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", "") } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
-        response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}" } #Create the response text
+        results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", ""), work_id: p["work_id"] } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
+        response = results.collect { |p| "<a href='https://app.bibliocloud.com/works/#{p[:work_id]}'>#{p[:title]}</a>, which has the ISBN #{p[:isbn]}" } #Create the response text
         response = response.join("\n")
         return response
       end
