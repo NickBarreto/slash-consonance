@@ -54,7 +54,7 @@ module Bibliocloud
         if data["products"].first["rights_not_available_countries"]
           # The .join() method returns a string rather than an array
           territories_excluded = data["products"].first["rights_not_available_countries"].join(", ")
-          territories << ", excluding #{territories_excluded}"
+          territories << " excluding #{territories_excluded}"
         end
         # Selecting the cover is a bit of a complex path
         if data["products"].first["supportingresources"].empty? == true
