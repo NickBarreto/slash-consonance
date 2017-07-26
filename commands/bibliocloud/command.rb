@@ -51,7 +51,7 @@ module Bibliocloud
         pubdate = Date.parse(pubdate)
         pubdate_as_text = pubdate.strftime('%d %b %Y')
         territories = "World"
-        if data["products"].first["rights_not_available_countries"]
+        unless data["products"].first["rights_not_available_countries"].empty?
           # The .join() method returns a string rather than an array
           territories_excluded = data["products"].first["rights_not_available_countries"].join(", ")
           territories << " excluding #{territories_excluded}"
