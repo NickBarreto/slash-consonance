@@ -51,10 +51,11 @@ module Bibliocloud
         pubdate = Date.parse(pubdate)
         pubdate_as_text = pubdate.strftime('%d %b %Y')
         if data["products"].first["rights_not_available_countries"].empty? == true
-          territories_excluded = "None"
+          territories = "World"
         else
           # The .join() method returns a string rather than an array
           territories_excluded = data["products"].first["rights_not_available_countries"].join(", ")
+          territories << ", excluding #{territories_excluded}"
         end
         # Selecting the cover is a bit of a complex path
         if data["products"].first["supportingresources"].empty? == true
@@ -102,8 +103,8 @@ module Bibliocloud
               "short" => true
             },
             {
-              "title" => "Territories Excluded",
-              "value" => "#{territories_excluded}",
+              "title" => "Territories",
+              "value" => "#{territories}",
               "short" => true
             },
             {
@@ -136,7 +137,7 @@ module Bibliocloud
       data = bibliocloud_api_call("#{text}","title")
       # Parse the data pulling out elements to return
       response = create_response(data)
-      # Send message to Slack depending on whether there is more than one result or not 
+      # Send message to Slack depending on whether there is more than one result or not
       if data["products"].length == 0
         set_response_text(response)
       end
@@ -157,7 +158,7 @@ module Bibliocloud
       # Query the Bibliocloud API with bibliocloud_api_call method defined above
       data = bibliocloud_api_call("#{text}","isbn")
       response = create_response(data)
-      # Send message to Slack depending on whether there is more than one result or not 
+      # Send message to Slack depending on whether there is more than one result or not
       if data["products"].length == 1
         add_response_attachment(response)
       else
@@ -173,7 +174,7 @@ module Bibliocloud
       # Query the Bibliocloud API
       data = bibliocloud_api_call("#{text}","date")
       response = create_response(data)
-      # Send message to Slack depending on whether there is more than one result or not 
+      # Send message to Slack depending on whether there is more than one result or not
       if data["products"].length == 0
         set_response_text(response)
       end
