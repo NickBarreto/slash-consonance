@@ -1,6 +1,6 @@
-require "cksh_commander"
-require "json"
-require "httparty"
+require 'cksh_commander'
+require 'json'
+require 'httparty'
 require 'date'
 require 'uri'
 
