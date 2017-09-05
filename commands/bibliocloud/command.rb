@@ -79,44 +79,43 @@ module Bibliocloud
           end
         end
         # Craft the response JSON as a ruby hash
-        response = {
-          "pretext" => "This search matched _#{title}_ in Bibliocloud.",
-          "title" => "#{title}",
-          "title_link" => "https://app.bibliocloud.com/works/#{work_id}",
-          "author_name" => "#{author}",
-          "thumb_url" => "#{cover}",
-          "fields" => [
-            {
+        {}.tap do |response_hash|
+          response_hash["pretext"] = "This search matched _#{title}_ in Bibliocloud."
+          response_hash["title"] = "#{title}"
+          response_hash["title_link"] = "https://app.bibliocloud.com/works/#{work_id}"
+          response_hash["author_name"] = "#{author}"
+          response_hash["thumb_url"] = "#{cover}"
+          response_hash["fields"] = Array.new.tap do |fields|
+            fields << {
               "title" => "ISBN",
               "value" => "#{isbn}",
               "short" => true
-            },
-            {
+            }
+            fields << {
               "title" => "Publication Date",
               "value" => "#{pubdate_as_text}",
               "short" => true
-            },
-            {
+            }
+            fields << {
               "title" => "GBP Price",
               "value" => "£#{price}",
               "short" => true
-            },
-            {
+            }
+            fields << {
               "title" => "Territories",
               "value" => "#{territories}",
               "short" => true
-            },
-            {
+            }
+            fields << {
               "title" => "Description",
               "value" => "#{description}",
               "short" => false
             }
-          ],
-          "footer" => "Bibliocloud API",
-          "footer_icon" => "https://app.bibliocloud.com/favicon-32x32.png",
-          "mrkdwn_in" => ["pretext"]
-        }
-        return response
+          end
+          response_hash["footer"] = "Bibliocloud API"
+          response_hash["footer_icon"] = "https://app.bibliocloud.com/favicon-32x32.png"
+          response_hash["mrkdwn_in"] = ["pretext"]
+        end
       end
       if  data["products"].length > 1 # More than one match, return only general info
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", ""), work_id: p["work_id"] } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
