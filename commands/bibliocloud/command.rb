@@ -8,7 +8,7 @@ module Bibliocloud
   class Command < CKSHCommander::Command
     set token: ENV['SLACK_TOKEN'] # This is needed for authentication into slack, and should be added as a config var
 
-    def bibliocloud_api_call(text,search_type)
+    def bibliocloud_api_call(text, search_type)
       bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
       if search_type == 'title'
         # [work_title_cont] means the API will return results that contain in their title
@@ -81,34 +81,34 @@ module Bibliocloud
         # Craft the response JSON as a ruby hash
         {}.tap do |response_hash|
           response_hash["pretext"] = "This search matched _#{title}_ in Bibliocloud."
-          response_hash["title"] = "#{title}"
+          response_hash["title"] = title
           response_hash["title_link"] = "https://app.bibliocloud.com/works/#{work_id}"
-          response_hash["author_name"] = "#{author}"
-          response_hash["thumb_url"] = "#{cover}"
-          response_hash["fields"] = Array.new.tap do |fields|
-            fields << {
+          response_hash["author_name"] = author
+          response_hash["thumb_url"] = cover
+          response_hash["fields"] = Array.new.tap do |field|
+            field << {
               "title" => "ISBN",
-              "value" => "#{isbn}",
+              "value" => isbn,
               "short" => true
             }
-            fields << {
+            field << {
               "title" => "Publication Date",
-              "value" => "#{pubdate_as_text}",
+              "value" => pubdate_as_text,
               "short" => true
             }
-            fields << {
+            field << {
               "title" => "GBP Price",
               "value" => "£#{price}",
               "short" => true
             }
-            fields << {
+            field << {
               "title" => "Territories",
-              "value" => "#{territories}",
+              "value" => territories,
               "short" => true
             }
-            fields << {
+            field << {
               "title" => "Description",
-              "value" => "#{description}",
+              "value" => description,
               "short" => false
             }
           end
