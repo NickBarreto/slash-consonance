@@ -79,7 +79,7 @@ module Bibliocloud
           end
         end
         # Craft the response JSON as a ruby hash
-        {}.tap do |response_hash|
+        response = {}.tap do |response_hash|
           response_hash["pretext"] = "This search matched _#{title}_ in Bibliocloud."
           response_hash["title"] = title
           response_hash["title_link"] = "https://app.bibliocloud.com/works/#{work_id}"
@@ -116,6 +116,7 @@ module Bibliocloud
           response_hash["footer_icon"] = "https://app.bibliocloud.com/favicon-32x32.png"
           response_hash["mrkdwn_in"] = ["pretext"]
         end
+        return response
       end
       if  data["products"].length > 1 # More than one match, return only general info
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", ""), work_id: p["work_id"] } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
@@ -131,6 +132,7 @@ module Bibliocloud
     # SLACK: /bibliocloud text
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
+      debug!
       # Query the Bibliocloud API with bibliocloud_api_call method defined above
       data = bibliocloud_api_call("#{text}","title")
       # Parse the data pulling out elements to return
