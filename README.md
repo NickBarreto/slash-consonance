@@ -1,16 +1,20 @@
-# slash-bibliocloud
+# slash-consonance
 
-_Search Bibliocloud from within Slack_
+# Update 2018-09-10
 
-Slash-bibliocloud lets you query your [Bibliocloud](http://bibliocloud.com/) data from within slack using a custom slash command integration.
+Since it has rebranded, this project has been updated and renamed in turn to _slash-consonance_. This project used to be called _slash-bibliocloud_.
 
-Slash-bibliocloud runs on a Heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
+_Search Consonance from within Slack_
+
+Slash-consonance_ lets you query your [Consonance](http://consonance.app/) data from within slack using a custom slash command integration.
+
+Slash-consonance runs on a Heroku dyno that receives the slash commands from your team's slack, queries the Consonance API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
 
 ## Requirements
 
-You'll need a Heroku account, an API key for querying the Bibliocloud API, and admin access to your team's Slack.
+You'll need a Heroku account, an API key for querying the Consonance API, and admin access to your team's Slack.
 
-You'll have to raise a support ticket with the Bibliocloud team to request an API key.
+You'll have to raise a support ticket with the Consonance team to request an API key.
 
 For the manual installation you'll need git and the Heroku CLI installed.
 
@@ -18,13 +22,13 @@ For the manual installation you'll need git and the Heroku CLI installed.
 
 Clone this repo and push it to a new Heroku application for yourself.
 
-	git clone https://github.com/nickbarreto/slash-bibliocloud.git
-	cd slash-bibliocloud
+	git clone https://github.com/nickbarreto/slash-consonance.git
+	cd slash-consonance
 	heroku create <your-app-name>
 	git remote add heroku
 	git push heroku master
 
-You can call your app anything you want, but I think your Slack team name plus "-slash-bibliocloud" is a good option.
+You can call your app anything you want, but I think your Slack team name plus "-slash-consonance" is a good option.
 
 ### Automatic Heroku Deploy
 
@@ -49,7 +53,7 @@ Press `Add Slash Command Integration`.
 Set the token from the slash command as a config var in your Heroku app. You also need to set your Bibliocloud API token. Back in your terminal:
 
 	heroku config:set SLACK_TOKEN=<your_slack_token>
-	heroku config:set BIBLIOCLOUD_TOKEN=<your_bibliocloud_token>
+	heroku config:set CONSONANCE_TOKEN=<your_consonance_token>
 
 You can also set these on the web without using the Heroku CLI in your terminal. Go to [https://dashboard.heroku.com/apps/](https://dashboard.heroku.com/apps/), click your app, then go to `Settings` and click "Reveal Config Vars". You'll see both those variables in there and be able to edit them.
 
@@ -57,10 +61,10 @@ Once those are set, you're all done!
 
 ## Usage
 
-You can now query your Bibliocloud data from within slack. Type in `/bibliocloud [text to search]` and you'll get back a list of products that contain the words you searched in their title, along with their ISBNs. You can then use `/bibliocloud isbn [an_isbn]` to get more information about one product. You can also search by publication date with `/bibiliocloud date yyyy-mm-dd`. Hooray!
+You can now query your Bibliocloud data from within slack. Type in `/consonance [text to search]` and you'll get back a list of products that contain the words you searched in their title, along with their ISBNs. You can then use `/consonance isbn [an_isbn]` to get more information about one product. You can also search by publication date with `/consonance date yyyy-mm-dd`. Hooray!
 
 Note: Heroku free dynos go to sleep after a certain amount of inactivity. If you make a query and you get an error, try it again in a moment after the dyno has woken up. If you want it to run 24/7, you can upgrade it to a Hobby Dyno for $7 a month.
 
 ## Contributing
 
-All the commands are defined in the `/commands/bibliocloud/command.rb` file. If you want to add any new subcommands, you can send them as pull requests for changes to that file.
+All the commands are defined in the `/commands/consonance/command.rb` file. If you want to add any new subcommands, you can send them as pull requests for changes to that file.

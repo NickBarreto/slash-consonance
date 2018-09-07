@@ -1,8 +1,8 @@
 {
-    "name": "Slash-Bibliocloud",
-    "description": "Search Bibliocloud from within Slack using a custom slash command",
+    "name": "Slash-Consonance",
+    "description": "Search Consonance from within Slack using a custom slash command",
     "repository": "https://github.com/NickBarreto/slash-bibliocloud", 
-    "keywords": ["slack", "bibliocloud", "ruby", "slash command"],
+    "keywords": ["slack", "consonance", "ruby", "slash command"],
     "env": {
         "SLACK_TOKEN": {
           "description": "A secret key for granting access to your team's slack.",

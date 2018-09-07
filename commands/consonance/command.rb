@@ -4,12 +4,12 @@ require 'httparty'
 require 'date'
 require 'uri'
 
-module Bibliocloud
+module Consonance
   class Command < CKSHCommander::Command
     set token: ENV['SLACK_TOKEN'] # This is needed for authentication into slack, and should be added as a config var
 
-    def bibliocloud_api_call(text, search_type)
-      bibliocloud_token = ENV['BIBLIOCLOUD_TOKEN'] #needed for the header authorisation
+    def consonance_api_call(text, search_type)
+      consonance_token = ENV['CONSONANCE_TOKEN'] #needed for the header authorisation
       if search_type == 'title'
         # [work_title_cont] means the API will return results that contain in their title
         # the words passed in from the slash command.
@@ -31,11 +31,11 @@ module Bibliocloud
           search_text = text
         end
       end
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[#{query_string}]=#{search_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      data = HTTParty.get("https://web.consonance.app/api/products.json?q[#{query_string}]=#{search_text}", headers: {"Authorization" => "Token token=#{consonance_token}"})
       return data
     end
 
-    def create_response(data) # Parses the data returned from bibliocloud_api_call
+    def create_response(data) # Parses the data returned from consonance_api_call
       # Generally to be used to assign a value to set_response_text, but if a single
       # product is returned it should be used to assign a value to add_response_attachment
       if data["products"].length == 0 # Needed if the query has no results
@@ -70,19 +70,19 @@ module Bibliocloud
         end
         # Select the description
         if data["products"].first["marketingtexts"].empty? == true
-          description = "(There is no description in Bibliocloud)"
+          description = "(There is no description in Consonance)"
         else
           if data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"].empty? == true
-            description = "(There is no main description for this title in Bibliocloud)"
+            description = "(There is no main description for this title in Consonance)"
           else
             description = data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"]
           end
         end
         # Craft the response JSON as a ruby hash
         response = {}.tap do |response_hash|
-          response_hash["pretext"] = "This search matched _#{title}_ in Bibliocloud."
+          response_hash["pretext"] = "This search matched _#{title}_ in Consonance."
           response_hash["title"] = title
-          response_hash["title_link"] = "https://app.bibliocloud.com/works/#{work_id}"
+          response_hash["title_link"] = "https://web.consonance.app/works/#{work_id}"
           response_hash["author_name"] = author
           response_hash["thumb_url"] = cover
           response_hash["fields"] = Array.new.tap do |field|
@@ -112,15 +112,15 @@ module Bibliocloud
               "short" => false
             }
           end
-          response_hash["footer"] = "Bibliocloud API"
-          response_hash["footer_icon"] = "https://app.bibliocloud.com/favicon-32x32.png"
+          response_hash["footer"] = "Consonance API"
+          response_hash["footer_icon"] = "https://web.consonance.app/favicon-32x32.png"
           response_hash["mrkdwn_in"] = ["pretext"]
         end
         return response
       end
       if  data["products"].length > 1 # More than one match, return only general info
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", ""), work_id: p["work_id"] } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
-        response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}: https://app.bibliocloud.com/works/#{p[:work_id]}" } #Create the response text
+        response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}: https://web.consonance.app/works/#{p[:work_id]}" } #Create the response text
         response = response.join("\n")
         return response
       end
@@ -129,12 +129,12 @@ module Bibliocloud
     # Search by title, the basic command
     # Searches for titles containing the text passed in. Can return
     # multiple matches as this is a general search.
-    # SLACK: /bibliocloud text
+    # SLACK: /consonance text
     desc "[text to search by title]", "Shows you books which contain the words you enter in their title."
     def ___(text)
       debug!
-      # Query the Bibliocloud API with bibliocloud_api_call method defined above
-      data = bibliocloud_api_call("#{text}","title")
+      # Query the Consonance API with consonance_api_call method defined above
+      data = consonance_api_call("#{text}","title")
       # Parse the data pulling out elements to return
       response = create_response(data)
       # Send message to Slack depending on whether there is more than one result or not
@@ -142,7 +142,7 @@ module Bibliocloud
         set_response_text(response)
       end
       if data["products"].length > 1
-        set_response_text("Bibliocloud has these books with ‘#{text}’ in the title:\n#{response}")
+        set_response_text("Consonance has these books with ‘#{text}’ in the title:\n#{response}")
       end
       if data["products"].length == 1
         add_response_attachment(response)
@@ -152,11 +152,11 @@ module Bibliocloud
     # Search by ISBN subcommand
     # Since this must return only one result or no matches, it should return
     # lots of details about the matched title.
-    # SLACK: /bibliocloud isbn xxxxxxxxxxxxx
-    desc "isbn [ISBN to search for]", "Shows you Bibliocloud data for the title with a matching ISBN."
+    # SLACK: /consonance isbn xxxxxxxxxxxxx
+    desc "isbn [ISBN to search for]", "Shows you Consonance data for the title with a matching ISBN."
     def isbn(text)
-      # Query the Bibliocloud API with bibliocloud_api_call method defined above
-      data = bibliocloud_api_call("#{text}","isbn")
+      # Query the Consonance API with consonance_api_call method defined above
+      data = consonance_api_call("#{text}","isbn")
       response = create_response(data)
       # Send message to Slack depending on whether there is more than one result or not
       if data["products"].length == 1
@@ -168,18 +168,18 @@ module Bibliocloud
 
     # Search by pub date subcommand
     # Will most likely return many matches, so only posts general details.
-    # SLACK: /bibliocloud date yyyy-mm-dd
-    desc "date [YYYY-MM-DD]", "Shows you which books in Bibliocloud publish on a date in yyyy-mm-dd."
+    # SLACK: /consonance date yyyy-mm-dd
+    desc "date [YYYY-MM-DD]", "Shows you which books in Consonance publish on a date in yyyy-mm-dd."
     def date(text)
-      # Query the Bibliocloud API
-      data = bibliocloud_api_call("#{text}","date")
+      # Query the Consonance API
+      data = consonance_api_call("#{text}","date")
       response = create_response(data)
       # Send message to Slack depending on whether there is more than one result or not
       if data["products"].length == 0
         set_response_text(response)
       end
       if data["products"].length > 1
-        set_response_text("Bibliocloud has these books publishing on #{text}:\n#{response}")
+        set_response_text("Consonance has these books publishing on #{text}:\n#{response}")
       end
       if data["products"].length == 1
         add_response_attachment(response)
