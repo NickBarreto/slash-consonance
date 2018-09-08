@@ -31,7 +31,7 @@ module Bibliocloud
           search_text = text
         end
       end
-      data = HTTParty.get("https://app.bibliocloud.com/api/products.json?q[#{query_string}]=#{search_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
+      data = HTTParty.get("https://web.consonance.app/api/products.json?q[#{query_string}]=#{search_text}", headers: {"Authorization" => "Token token=#{bibliocloud_token}"})
       return data
     end
     # Search by title, the basic command
@@ -48,7 +48,7 @@ module Bibliocloud
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", "") } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
         response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}" } #Create the response text
         response = response.join("\n")
-        set_response_text("Bibliocloud has these books with ‘#{text}’ in the title:\n#{response}")
+        set_response_text("Consonance has these products with ‘#{text}’ in the title:\n#{response}")
       end
     end
 
@@ -56,7 +56,7 @@ module Bibliocloud
     # Since this must return only one result or no matches, it should return
     # lots of details about the matched title.
     # SLACK: /bibliocloud isbn xxxxxxxxxxxxx
-    desc "isbn [ISBN to search for]", "Shows you Bibliocloud data for the title with a matching ISBN."
+    desc "isbn [ISBN to search for]", "Shows you Consonance data for the product with a matching ISBN."
     def isbn(text)
       # Query the Bibliocloud API with bibliocloud_api_call method defined above
       data = bibliocloud_api_call("#{text}","isbn")
@@ -90,7 +90,7 @@ module Bibliocloud
         end
         # Select the description
         if data["products"].first["marketingtexts"].empty? == true
-          description = "(There is no description in Bibliocloud)"
+          description = "(There is no description in Consonance)"
         else
           if data["products"].first["marketingtexts"].find{ |x| x['code'] == "01"}["external_text"].empty? == true
             description = "(There is no main description for this title in Bibliocloud)"
@@ -102,9 +102,9 @@ module Bibliocloud
         description = description.gsub('<', '&lt;').gsub('>', '&gt;')
         # Send the response to Slack using the attachment format: https://api.slack.com/docs/message-attachments.
         add_response_attachment({
-          "pretext": "This ISBN is for _#{title}_ according to Bibliocloud.",
+          "pretext": "This ISBN is for _#{title}_ according to Consonance.",
           "title": "#{title}",
-          "title_link": "https://app.bibliocloud.com/works/#{work_id}",
+          "title_link": "https://web.consonance.app/works/#{work_id}",
           "author_name": "#{author}",
           "thumb_url": "#{cover}",
           "fields": [
@@ -143,8 +143,8 @@ module Bibliocloud
 
     # Search by pub date subcommand
     # Will most likely return many matches, so only posts general details.
-    # SLACK: /bibliocloud date yyyy-mm-dd
-    desc "date [YYYY-MM-DD]", "Shows you which books in Bibliocloud publish on a date in yyyy-mm-dd."
+    # SLACK: /consonance date yyyy-mm-dd
+    desc "date [YYYY-MM-DD]", "Shows you which products in Consonance publish on a date in yyyy-mm-dd."
     def date(text)
       # Query the Bibliocloud API
       data = bibliocloud_api_call("#{text}","date")
@@ -154,7 +154,7 @@ module Bibliocloud
         results = data["products"].map { |p| { title: p["full_title"], isbn: p["isbn"].gsub("-", "") } } # Pulls out just the title and ISBN into an array of hashes, while removing hyphens from the ISBN
         response = results.collect { |p| "#{p[:title]}, which has the ISBN #{p[:isbn]}" } #Create the response text
         response = response.join("\n") # Join each response with a newline as the separator
-        set_response_text("Bibliocloud has these books publishing on #{text}:\n#{response}")
+        set_response_text("Consonance has these products publishing on #{text}:\n#{response}")
       end
     end
   end
