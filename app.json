@@ -8,7 +8,7 @@
           "description": "A secret key for granting access to your team's slack.",
           "value": "secret"
 		},
-		"BIBLIOCLOUD_TOKEN": {
+		"CONSONANCE_TOKEN": {
           "description": "A secret key for granting access to the Bibliocloud API.",
           "value": "secret"
 		},
