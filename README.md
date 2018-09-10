@@ -2,7 +2,11 @@
 
 # Update 2018-09-10
 
-Since it has rebranded, this project has been updated and renamed in turn to _slash-consonance_. This project used to be called _slash-bibliocloud_. Note that you'll need to change your 'bibliocloud_token' config var in Heroku to 'consonance_token' when upgrading.
+Since it has rebranded, this project has been updated and renamed in turn to _slash-consonance_. This project used to be called _slash-bibliocloud_. 
+
+## Upgrade considerations
+
+You'll need to change your 'bibliocloud_token' config var in Heroku to 'consonance_token' when upgrading from slash-bibliocloud. Other than that you may also need to update your settings within Slack so the replies are posted using the new branding.
 
 _Search Consonance from within Slack_
 
