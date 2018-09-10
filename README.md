@@ -6,7 +6,7 @@ Since it has rebranded, this project has been updated and renamed in turn to _sl
 
 _Search Consonance from within Slack_
 
-Slash-consonance_ lets you query your [Consonance](http://consonance.app/) data from within slack using a custom slash command integration.
+Slash-consonance lets you query your [Consonance](http://consonance.app/) data from within slack using a custom slash command integration.
 
 Slash-consonance runs on a Heroku dyno that receives the slash commands from your team's slack, queries the Consonance API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
 
