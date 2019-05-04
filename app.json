@@ -1,7 +1,7 @@
 {
     "name": "Slash-Consonance",
     "description": "Search Consonance from within Slack using a custom slash command",
-    "repository": "https://github.com/NickBarreto/slash-bibliocloud",
+    "repository": "https://github.com/NickBarreto/slash-consonance",
     "keywords": ["slack", "consonance", "ruby", "slash command"],
     "env": {
         "SLACK_TOKEN": {
@@ -9,7 +9,7 @@
           "value": "secret"
 		},
 		"CONSONANCE_TOKEN": {
-          "description": "A secret key for granting access to the Bibliocloud API.",
+          "description": "A secret key for granting access to the Consonance API.",
           "value": "secret"
 		},
 	}
