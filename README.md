@@ -6,11 +6,12 @@ Slash-consonance lets you query your [Consonance](http://consonance.app/) data f
 
 Slash-consonance runs on a Heroku dyno that receives the slash commands from your team's slack, queries the Bibliocloud API for the relevant information, processes the results and posts them back to Slack. It is a simple ruby application using the excellent [cksh_commander](https://github.com/openarcllc/cksh_commander) gem.
 
+
 ## Requirements
 
-You'll need a Heroku account, an API key for querying the Bibliocloud API, and admin access to your team's Slack.
+You'll need a Heroku account, an API key for querying the Consonance API, and admin access to your team's Slack.
 
-You'll have to raise a support ticket with the Bibliocloud team to request an API key.
+You'll have to raise a support ticket with the Consonance team to request an API key.
 
 For the manual installation you'll need git and the Heroku CLI installed.
 
@@ -18,7 +19,7 @@ For the manual installation you'll need git and the Heroku CLI installed.
 
 Clone this repo and push it to a new Heroku application for yourself.
 
-	git clone https://github.com/generalproducts/slash-consonance.git
+	git clone https://github.com/nickbarreto/slash-consonance.git
 	cd slash-consonance
 	heroku create <your-app-name>
 	git remote add heroku
