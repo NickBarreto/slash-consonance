@@ -46,6 +46,7 @@ module Consonance
         title = data["products"].first["full_title"]
         author = data["products"].first["authorship"]
         isbn = data["products"].first["isbn"].gsub('-', '')
+        extent = data["products"].first["extents"]["page_count"]
         # Ingesting and parsing the date as a date object
         pubdate = data["products"].first["pub_date"]
         pubdate = Date.parse(pubdate)
@@ -104,6 +105,11 @@ module Consonance
             field << {
               "title" => "Territories",
               "value" => territories,
+              "short" => true
+            }
+            field << {
+              "title" => "Extent",
+              "value" => extent,
               "short" => true
             }
             field << {
