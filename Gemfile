@@ -1,5 +1,6 @@
 source "https://rubygems.org"
-ruby "2.4.4"
+
+ruby "2.4.6"
 
 gem 'sinatra'
 gem 'cksh_commander'
